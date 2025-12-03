@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -16,19 +17,13 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // Find the user by email
-      const res = await fetch("/api/find-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      const res = authClient.requestPasswordReset({
+        email,
+        redirectTo: "/reset-password",
       });
 
-      const data = await res.json();
-
-      if (!data.user) {
+      if ((await res).data?.status === false) {
         toast.error("User not found");
-      } else {
-        router.push(`/reset-password?userId=${data.user.id}`);
       }
     } catch (err) {
       console.error(err);

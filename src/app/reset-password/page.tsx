@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { resetPassword, resetPasswordSchema } from "@/actions/password-actions";
+import { resetPassword } from "@/actions/password-actions";
+import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
-  const params = useSearchParams();
   const router = useRouter();
-  const userId = params.get("userId")!;
+  const token = new URLSearchParams(window.location.search).get("token");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,7 +37,7 @@ export default function ResetPasswordPage() {
       setLoading(false);
     }
   };
-
+  if (!token) return null;
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-12 space-y-4">
       <h1 className="text-2xl font-bold">Reset Password</h1>
